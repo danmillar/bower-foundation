@@ -11,8 +11,8 @@
     version : '4.3.2',
 
     defaults : {
-      expose               : false,      // turn on or off the expose feature
-      modal                : false,      // Whether to cover page with modal during the tour
+      expose               : false,     // turn on or off the expose feature
+      modal                : false,     // Whether to cover page with modal during the tour
       tipLocation          : 'bottom',  // 'top' or 'bottom' in relation to parent
       nubPosition          : 'auto',    // override on a per tooltip bases
       scrollSpeed          : 300,       // Page scrolling speed in milliseconds, 0 = no scroll animation
@@ -29,6 +29,7 @@
       cookieDomain         : false,     // Will this cookie be attached to a domain, ie. '.notableapp.com'
       cookieExpires        : 365,       // set when you would like the cookie to expire.
       tipContainer         : 'body',    // Where will the tip be attached
+      tipContainerPlacement: 'append',  // Whether to 'append' or 'prepend' inside tipContainer
       postRideCallback     : function (){},    // A method to call once the tour closes (canceled or complete)
       postStepCallback     : function (){},    // A method to call after each step
       preStepCallback      : function (){},    // A method to call before each step
@@ -129,7 +130,7 @@
       // non configureable settings
       this.settings.$content_el = $this;
       this.settings.$body = $(this.settings.tipContainer);
-      this.settings.body_offset = $(this.settings.tipContainer).position();
+      this.settings.body_offset = $(this.settings.tipContainer).offset();
       this.settings.$tip_content = this.settings.$content_el.find('> li');
       this.settings.paused = false;
       this.settings.attempts = 0;
@@ -223,7 +224,11 @@
           li : opts.$li
         }));
 
-      $(this.settings.tipContainer).append($tip_content);
+      if(this.settings.tipContainerPlacement == 'prepend') {
+        $(this.settings.tipContainer).prepend($tip_content);
+      } else {
+        $(this.settings.tipContainer).append($tip_content);
+      }
     },
 
     show : function (init) {
@@ -448,8 +453,8 @@
               leftOffset = this.settings.$target.offset().width - this.settings.$next_tip.width() + leftOffset;
             }
             this.settings.$next_tip.css({
-              top: (this.settings.$target.offset().top + nub_height + this.outerHeight(this.settings.$target)),
-              left: leftOffset});
+              top: (this.settings.$target.offset().top + nub_height + this.outerHeight(this.settings.$target) - this.settings.body_offset.top),
+              left: (leftOffset - this.settings.body_offset.left)});
 
             this.nub_position($nub, this.settings.tipSettings.nubPosition, 'top');
 
@@ -459,24 +464,24 @@
               leftOffset = this.settings.$target.offset().width - this.settings.$next_tip.width() + leftOffset;
             }
             this.settings.$next_tip.css({
-              top: (this.settings.$target.offset().top - this.outerHeight(this.settings.$next_tip) - nub_height),
-              left: leftOffset});
+              top: (this.settings.$target.offset().top - this.outerHeight(this.settings.$next_tip) - nub_height - this.settings.body_offset.top),
+              left: (leftOffset - this.settings.body_offset.left)});
 
             this.nub_position($nub, this.settings.tipSettings.nubPosition, 'bottom');
 
           } else if (this.right()) {
 
             this.settings.$next_tip.css({
-              top: this.settings.$target.offset().top,
-              left: (this.outerWidth(this.settings.$target) + this.settings.$target.offset().left + nub_width)});
+              top: (this.settings.$target.offset().top - this.settings.body_offset.top),
+              left: (this.outerWidth(this.settings.$target) + this.settings.$target.offset().left + nub_width - this.settings.body_offset.left)});
 
             this.nub_position($nub, this.settings.tipSettings.nubPosition, 'left');
 
           } else if (this.left()) {
 
             this.settings.$next_tip.css({
-              top: this.settings.$target.offset().top,
-              left: (this.settings.$target.offset().left - this.outerWidth(this.settings.$next_tip) - nub_width)});
+              top: (this.settings.$target.offset().top - this.settings.body_offset.top),
+              left: (this.settings.$target.offset().left - this.outerWidth(this.settings.$next_tip) - nub_width - this.settings.body_offset.left)});
 
             this.nub_position($nub, this.settings.tipSettings.nubPosition, 'right');
 
