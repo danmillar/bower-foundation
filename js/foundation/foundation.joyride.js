@@ -33,6 +33,7 @@
       postStepCallback     : function (){},    // A method to call after each step
       preStepCallback      : function (){},    // A method to call before each step
       preRideCallback      : function (){},    // A method to call before the tour starts (passed index, tip, and cloned exposed element)
+      postPositionCallback : function (){},    // A method to call after the next tip has been positioned
       postExposeCallback   : function (){},    // A method to call after an element has been exposed
       template : { // HTML segments for tip layout
         link    : '<a href="#close" class="joyride-close-tip">&times;</a>',
@@ -268,8 +269,12 @@
 
           if (this.is_phone()) {
             this.pos_phone(true);
+
+            this.settings.postPositionCallback(this.settings.$next_tip, 'phone');
           } else {
             this.pos_default(true);
+
+            this.settings.postPositionCallback(this.settings.$next_tip, 'default');
           }
 
           $timer = this.settings.$next_tip.find('.joyride-timer-indicator');
