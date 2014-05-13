@@ -30,6 +30,7 @@
       cookieExpires        : 365,       // set when you would like the cookie to expire.
       tipContainer         : 'body',    // Where will the tip be attached
       tipContainerPlacement: 'append',  // Whether to 'append' or 'prepend' inside tipContainer
+      tipLocationPatterns  : {},        // Control order of positioning attempts 
       postRideCallback     : function (){},    // A method to call once the tour closes (canceled or complete)
       postStepCallback     : function (){},    // A method to call after each step
       preStepCallback      : function (){},    // A method to call before each step
@@ -135,12 +136,14 @@
       this.settings.paused = false;
       this.settings.attempts = 0;
 
-      this.settings.tipLocationPatterns = {
-        top: ['bottom'],
-        bottom: [], // bottom should not need to be repositioned
-        left: ['right', 'top', 'bottom'],
-        right: ['left', 'top', 'bottom']
-      };
+      if(typeof this.settings.tipLocationPatterns.top === 'undefined') {
+        this.settings.tipLocationPatterns = {
+          top: ['bottom'],
+          bottom: [], // bottom should not need to be repositioned
+          left: ['right', 'top', 'bottom'],
+          right: ['left', 'top', 'bottom']
+        };
+      }
 
       // can we create cookies?
       if (typeof $.cookie !== 'function') {
